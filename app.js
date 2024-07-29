@@ -31,7 +31,7 @@ function processFile() {
             }
         }
 
-        console.log(dataArray);
+        console.log('Data Array:', dataArray);
         createChart(dataArray);
     };
 
