@@ -3,62 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>3D Scatter Plot</title>
+    <title>2D Scatter Plot</title>
 </head>
 <body>
     <div id="container" style="height: 600px; width: 800px;"></div>
 
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const dataArray = [
-                { x: 1, y: 2, z: 3, name: 'Point 1' },
-                { x: 2, y: 3, z: 4, name: 'Point 2' },
-                { x: 3, y: 4, z: 5, name: 'Point 3' }
+                { x: 1, y: 2, name: 'Point 1' },
+                { x: 2, y: 3, name: 'Point 2' },
+                { x: 3, y: 4, name: 'Point 3' }
             ];
 
             console.log('Data Array:', dataArray); // Logging the data array
 
             Highcharts.chart('container', {
                 chart: {
-                    type: 'scatter3d',
-                    options3d: {
-                        enabled: true,
-                        alpha: 10,
-                        beta: 30,
-                        depth: 350,
-                        viewDistance: 25,
-                        fitToPlot: false,
-                        frame: {
-                            bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
-                            back: { size: 1, color: 'rgba(0,0,0,0.04)' },
-                            side: { size: 1, color: 'rgba(0,0,0,0.06)' }
-                        }
-                    }
+                    type: 'scatter',
+                    zoomType: 'xy'
                 },
                 title: {
-                    text: '3D Scatter Plot'
-                },
-                subtitle: {
-                    text: 'Use the mouse to navigate around this 3D plot.'
+                    text: '2D Scatter Plot'
                 },
                 plotOptions: {
                     scatter: {
-                        width: 10,
-                        height: 10,
-                        depth: 10,
-                        dataLabels: {
-                            enabled: true,
-                            format: '{point.name}',
-                            style: {
-                                fontSize: '12px',
-                                color: 'black',
-                                textOutline: 'none'
+                        marker: {
+                            radius: 5,
+                            states: {
+                                hover: {
+                                    enabled: true,
+                                    lineColor: 'rgb(100,100,100)'
+                                }
                             }
+                        },
+                        states: {
+                            hover: {
+                                marker: {
+                                    enabled: false
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{series.name}</b><br>',
+                            pointFormat: '{point.name}<br>X: {point.x}, Y: {point.y}'
                         }
                     }
                 },
@@ -72,19 +62,22 @@
                         text: 'Y Axis'
                     }
                 },
-                zAxis: {
-                    title: {
-                        text: 'Z Axis'
-                    }
-                },
                 series: [{
                     name: 'Data',
                     data: dataArray.map(point => ({
                         x: point.x,
                         y: point.y,
-                        z: point.z,
                         name: point.name
-                    }))
+                    })),
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}',
+                        style: {
+                            fontSize: '12px',
+                            color: 'black',
+                            textOutline: 'none'
+                        }
+                    }
                 }]
             });
 
