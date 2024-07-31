@@ -246,7 +246,7 @@ function createChart(dataArray) {
                 depth: 10,
                    }
                 }
-            }
+            })
         },
         xAxis: {
             min: parseFloat(document.getElementById('xMin').value),
