@@ -39,9 +39,6 @@ function processFile() {
         const worksheet = workbook.Sheets[firstSheetName];
         const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        // 読み込まれたデータをコンソールに出力
-        console.log("Loaded data:", json);
-
         // ファイル名から拡張子を除いた名前を取得 (追加)
         const fileName = file.name.split('.').slice(0, -1).join('.');
 
@@ -67,7 +64,6 @@ function processFile() {
 }
 
 function resizeChart() {
-    console.log("Resizing chart...");
     const width = parseInt(document.getElementById('chartWidth').value, 10);
     const height = parseInt(document.getElementById('chartHeight').value, 10);
     const depth = parseInt(document.getElementById('chartDepth').value, 10); // z軸のサイズを取得
@@ -82,14 +78,12 @@ function resizeChart() {
                 }
             }
         });
-        console.log("Chart resized to width:", width, "height:", height, "depth:", depth);
     } else {
         console.error("Chart not found.");
     }
 }
 
 function resizeChartByRatio() {
-    console.log("Resizing chart by ratio...");
     const baseSize = parseInt(document.getElementById('baseSize').value, 10);
     const widthRatio = parseFloat(document.getElementById('widthRatio').value);
     const heightRatio = parseFloat(document.getElementById('heightRatio').value);
@@ -109,26 +103,22 @@ function resizeChartByRatio() {
                 }
             }
         });
-        console.log("Chart resized by ratio to width:", width, "height:", height, "depth:", depth);
     } else {
         console.error("Chart not found.");
     }
 }
 
 function updateAxisUnits() {
-    console.log("Updating axis units...");
     if (chart) {
         chart.xAxis[0].setTitle({ text: document.getElementById('xAxisUnit').value });
         chart.yAxis[0].setTitle({ text: document.getElementById('yAxisUnit').value });
         chart.zAxis[0].setTitle({ text: document.getElementById('zAxisUnit').value });
-        console.log("Axis units updated.");
     } else {
         console.error("Chart not found.");
     }
 }
 
 function updateAxisRange() {
-    console.log("Updating axis range...");
     if (chart) {
         chart.xAxis[0].update({
             min: parseFloat(document.getElementById('xMin').value),
@@ -142,14 +132,12 @@ function updateAxisRange() {
             min: parseFloat(document.getElementById('zMin').value),
             max: parseFloat(document.getElementById('zMax').value)
         });
-        console.log("Axis range updated.");
     } else {
         console.error("Chart not found.");
     }
 }
 
 function updateViewDistance() {
-    console.log("Updating view distance...");
     const viewDistance = parseInt(document.getElementById('viewDistance').value, 10);
 
     if (chart) {
@@ -160,20 +148,17 @@ function updateViewDistance() {
                 }
             }
         });
-        console.log("View distance updated to:", viewDistance);
     } else {
         console.error("Chart not found.");
     }
 }
 
 function updateColoring() {
-    console.log("Updating coloring...");
     const colorColumn = document.getElementById('colorColumn').value;
     processData(originalData, colorColumn);
 }
 
 function updateColors() {
-    console.log("Updating custom colors...");
     for (let i = 0; i < 5; i++) {
         customColors[i] = document.getElementById(`color${i}`).value;
     }
@@ -224,7 +209,6 @@ function processData(data, colorColumn = 'z') {
     document.getElementById('zMin').value = zMin;
     document.getElementById('zMax').value = zMax;
 
-    console.log(dataArray);  // デバッグ用にデータを確認
     createChart(dataArray);
 }
 
@@ -233,7 +217,6 @@ function getColorByValue(value) {
 }
 
 function createChart(dataArray) {
-    console.log("Creating chart with data:", dataArray); // デバッグ用ログ
     const chartTitle = document.getElementById('container').getAttribute('data-title'); // 追加
     const xAxisUnit = document.getElementById('xAxisUnit').value; // 追加
     const yAxisUnit = document.getElementById('yAxisUnit').value; // 追加
@@ -241,7 +224,6 @@ function createChart(dataArray) {
     const viewDistance = parseInt(document.getElementById('viewDistance').value, 10); // 追加
     chart = Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             type: 'scatter3d',
             margin: [80, 80, 80, 80], // マージンを調整
             width: 600, // 初期幅
@@ -329,7 +311,6 @@ function createChart(dataArray) {
               pointFormat: `<b>{point.name}</b><br>X: {point.x:.2f}<br>Y: {point.y:.2f}<br>Z: {point.z:.2f}`
         }
     });
-    console.log(chart); // チャートオブジェクトの確認
 
     // 3D散布図のマウスイベントを追加
     enable3DNavigation(chart);
