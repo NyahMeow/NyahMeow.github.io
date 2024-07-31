@@ -2,9 +2,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded and parsed");
     document.getElementById('analyzeButton').addEventListener('click', processFile);
     document.getElementById('generateLinkButton').addEventListener('click', generateLink);
+    checkAndLoadData(); // Check and load data if available in URL
 });
 
 let globalDataArray = []; // Store data globally for link generation
+
+const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID'; // Replace with your Google Sheet ID
+const API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your Google API Key
 
 function processFile() {
     const fileInput = document.getElementById('fileInput');
@@ -180,33 +184,26 @@ function createChart(dataArray) {
     }(Highcharts));
 }
 
-// Generate link using GitHub Gists
+// Generate link using Google Sheets
 async function generateLink() {
     const dataString = JSON.stringify(globalDataArray);
 
     try {
-        const response = await fetch('https://api.github.com/gists', {
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:append?valueInputOption=USER_ENTERED&key=${API_KEY}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `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` // Replace with your token
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                description: "3D Scatter Plot Data",
-                public: true,
-                files: {
-                    "data.json": {
-                        content: dataString
-                    }
-                }
+                range: "A1",
+                majorDimension: "ROWS",
+                values: [[dataString]]
             })
         });
 
         const result = await response.json();
-        const gistUrl = result.files["data.json"].raw_url;
-
         const baseURL = window.location.href.split('?')[0];
-        const link = `${baseURL}?gistUrl=${encodeURIComponent(gistUrl)}`;
+        const link = `${baseURL}?sheetId=${SHEET_ID}`;
         document.getElementById('generatedLink').value = link;
     } catch (error) {
         console.error("Error generating link:", error);
@@ -217,11 +214,12 @@ async function generateLink() {
 // Parse URL parameters to load chart data if available
 async function checkAndLoadData() {
     const urlParams = new URLSearchParams(window.location.search);
-    const gistUrl = urlParams.get('gistUrl');
-    if (gistUrl) {
+    const sheetId = urlParams.get('sheetId');
+    if (sheetId) {
         try {
-            const response = await fetch(decodeURIComponent(gistUrl));
-            const dataString = await response.text();
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:A?key=${API_KEY}`);
+            const result = await response.json();
+            const dataString = result.values[0][0];
             const dataArray = JSON.parse(dataString);
             createChart(dataArray);
         } catch (error) {
