@@ -4,22 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>3D Scatter Plot</title>
-</head>
-<body>
-    <div id="controls">
-        <input type="file" id="fileInput" accept=".xlsx, .xls" />
-        <button id="analyzeButton">Plot the Data</button>
-        <button id="generateLinkButton">Generate Link</button>
-        <input type="text" id="generatedLink" readonly />
-    </div>
-    <div id="container" style="height: 600px; width: 800px;"></div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/highcharts-3d.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="app.js"></script>
+</head>
+<body>
+    <div>
+        <input type="file" id="fileInput" accept=".xlsx, .xls">
+        <button id="analyzeButton">Plot the Data</button>
+    </div>
+    <div>
+        <label for="sheetIdInput">Google Sheet ID:</label>
+        <input type="text" id="sheetIdInput">
+    </div>
+    <div>
+        <label for="apiKeyInput">Google API Key:</label>
+        <input type="text" id="apiKeyInput">
+    </div>
+    <div>
+        <button id="generateLinkButton">Generate Link</button>
+        <input type="text" id="generatedLink" readonly>
+    </div>
+    <div id="container" style="height: 600px;"></div>
 </body>
 </html>
