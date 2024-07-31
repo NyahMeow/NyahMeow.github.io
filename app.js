@@ -307,9 +307,18 @@ function createChart(dataArray) {
         },
         series: [{
             name: 'Data',
-            colorByPoint: true,
             data: dataArray,
-            keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
+            colorByPoint: true,
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                style: {
+                    fontSize: '12px',
+                    color: 'black',
+                    textOutline: 'none'
+                }
+            }
+                //keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
         }],
         tooltip: {
             headerFormat: '',
