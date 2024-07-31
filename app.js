@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('analyzeButton').addEventListener('click', processFile);
 });
 
+let globalDataArray = []; // Store data globally for link generation
+
 function processFile() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -34,6 +36,7 @@ function processFile() {
 
 function processData(data) {
     var dataArray = [];
+    var xValues = [], yValues = [], zValues = [];
     for (var i = 1; i < data.length; i++) { // Skip header row
         var row = data[i];
         if (Array.isArray(row) && row.length >= 4) { // Ensure at least 4 columns
@@ -41,20 +44,56 @@ function processData(data) {
             var y = parseFloat(row[1]);
             var z = parseFloat(row[2]);
             var name = row[3];
+            var color = row[4]; // Color column
+
+            xValues.push(x);
+            yValues.push(y);
+            zValues.push(z);
+
             dataArray.push({
                 'x': x,
                 'y': y,
                 'z': z,
-                'name': name
+                'name': name,
+                'color': color
             });
         }
     }
     console.log("Processed data array:", dataArray);  // Log data for debugging
-    createChart(dataArray);
+    globalDataArray = dataArray; // Store data globally
+
+    // Automatically set default Min/Max values
+    var xMin = Math.min(...xValues);
+    var xMax = Math.max(...xValues);
+    var yMin = Math.min(...yValues);
+    var yMax = Math.max(...yValues);
+    var zMin = Math.min(...zValues);
+    var zMax = Math.max(...zValues);
+
+    createChart(dataArray, xMin, xMax, yMin, yMax, zMin, zMax);
 }
 
-function createChart(dataArray) {
+function createChart(dataArray, xMin, xMax, yMin, yMax, zMin, zMax) {
     console.log("Creating chart with data:", dataArray);
+
+    var basePixel = parseInt(document.getElementById('basePixel').value);
+    var widthRatio = parseFloat(document.getElementById('widthRatio').value);
+    var heightRatio = parseFloat(document.getElementById('heightRatio').value);
+    var depthRatio = parseFloat(document.getElementById('depthRatio').value);
+
+    var colorBy = document.getElementById('colorBy').value;
+
+    if (colorBy === 'columnE') {
+        var colors = ['red', 'green', 'blue', 'yellow', 'purple'];
+        dataArray.forEach((point, index) => {
+            point.color = colors[index % colors.length];
+        });
+    } else {
+        dataArray.forEach((point) => {
+            point.color = `rgba(0, 105, 255, ${1 - (point.z / zMax)})`;
+        });
+    }
+
     var chart = Highcharts.chart('container', {
         chart: {
             renderTo: 'container',
@@ -63,7 +102,7 @@ function createChart(dataArray) {
                 enabled: true,
                 alpha: 10,
                 beta: 30,
-                depth: 350,
+                depth: basePixel * depthRatio,
                 viewDistance: 25,
                 fitToPlot: false,
                 frame: {
@@ -81,9 +120,9 @@ function createChart(dataArray) {
         },
         plotOptions: {
             scatter: {
-                width: 10,
-                height: 10,
-                depth: 10,
+                width: basePixel * widthRatio,
+                height: basePixel * heightRatio,
+                depth: basePixel * depthRatio,
                 dataLabels: {
                     enabled: true,
                     format: '{point.name}',
@@ -96,18 +135,24 @@ function createChart(dataArray) {
             }
         },
         xAxis: {
+            min: xMin,
+            max: xMax,
             title: {
-                text: 'X Axis'
+                text: document.getElementById('xAxisLabel').value
             }
         },
         yAxis: {
+            min: yMin,
+            max: yMax,
             title: {
-                text: 'Y Axis'
+                text: document.getElementById('yAxisLabel').value
             }
         },
         zAxis: {
+            min: zMin,
+            max: zMax,
             title: {
-                text: 'Z Axis'
+                text: document.getElementById('zAxisLabel').value
             }
         },
         series: [{
@@ -147,6 +192,13 @@ function createChart(dataArray) {
                 // Get e.chartX and e.chartY
                 e = chart.pointer.normalize(e);
 
+               Sure, let's continue from where we left off with the updated `app.js` code to include the functionalities you need:
+
+### Updated `app.js`
+
+Here's the continuation of the updated JavaScript code with the necessary features:
+
+```javascript
                 chart.update({
                     chart: {
                         options3d: {
