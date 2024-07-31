@@ -245,8 +245,6 @@ function createChart(dataArray) {
                 height: 10,
                 depth: 10,
                    }
-                }
-            })
         },
         xAxis: {
             min: parseFloat(document.getElementById('xMin').value),
@@ -285,6 +283,7 @@ function createChart(dataArray) {
                     color: 'gray',
                     textOutline: none'
                 }
+            }
         }],
     });
 
