@@ -42,14 +42,14 @@ function processFile() {
         // ファイル名から拡張子を除いた名前を取得 (追加)
         const fileName = file.name.split('.').slice(0, -1).join('.');
 
-        // X, Y, Z軸の名称を初期設定 (追加)
+        // X, Y, Z軸の名称を初期設定
         if (json.length > 0) {
             document.getElementById('xAxisUnit').value = json[0][0] || 'X-Axis';
             document.getElementById('yAxisUnit').value = json[0][1] || 'Y-Axis';
             document.getElementById('zAxisUnit').value = json[0][2] || 'Z-Axis';
         }
 
-        // チャートタイトルをファイル名に設定 (追加)
+        // チャートタイトルをファイル名に設定
         document.getElementById('container').setAttribute('data-title', fileName);
         
         originalData = json;
@@ -207,11 +207,11 @@ function getColorByValue(value) {
 }
 
 function createChart(dataArray) {
-    const chartTitle = document.getElementById('container').getAttribute('data-title'); // 追加
-    const xAxisUnit = document.getElementById('xAxisUnit').value; // 追加
-    const yAxisUnit = document.getElementById('yAxisUnit').value; // 追加
-    const zAxisUnit = document.getElementById('zAxisUnit').value; // 追加
-    const viewDistance = parseInt(document.getElementById('viewDistance').value, 10); // 追加
+    const chartTitle = document.getElementById('container').getAttribute('data-title');
+    const xAxisUnit = document.getElementById('xAxisUnit').value;
+    const yAxisUnit = document.getElementById('yAxisUnit').value;
+    const zAxisUnit = document.getElementById('zAxisUnit').value;
+    const viewDistance = parseInt(document.getElementById('viewDistance').value, 10);
     chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter3d',
