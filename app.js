@@ -274,7 +274,7 @@ function createChart(dataArray) {
         },
         series: [{
             name: 'Data',
-            data: dataArray
+            data: dataArray,
             dataLabels:{
                 enabled: true,
                 format: '{point.name}',
