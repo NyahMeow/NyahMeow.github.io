@@ -402,19 +402,3 @@ function enable3DNavigation(chart) {
         H.addEvent(chart.container, 'touchstart', dragStart);
     }(Highcharts));
 }
-
-function generateLink() {
-    if (!chart) {
-        alert("Chart is not initialized.");
-        return;
-    }
-
-    const chartConfig = chart.userOptions;
-    const chartConfigStr = JSON.stringify(chartConfig);
-    const chartConfigKey = 'chartConfig_' + Date.now();
-    localStorage.setItem(chartConfigKey, chartConfigStr);
-
-    const generatedLink = `${window.location.origin}${window.location.pathname}?chartConfigKey=${chartConfigKey}`;
-    const linkContainer = document.getElementById('linkContainer');
-    linkContainer.innerHTML = `<a href="${generatedLink}" target="_blank">Open Chart</a>`;
-}
