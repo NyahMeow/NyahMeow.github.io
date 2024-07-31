@@ -244,13 +244,13 @@ function createChart(dataArray) {
             renderTo: 'container',
             type: 'scatter3d',
             margin: [80, 80, 80, 80], // マージンを調整
-            width: 650, // 初期幅
-            height: 600, // 初期高さ
+            width: 600, // 初期幅
+            height: 550, // 初期高さ
             options3d: {
                 enabled: true,
                 alpha: 10,
                 beta: 30,
-                depth: 350,
+                depth: 320,
                 viewDistance: viewDistance,
                 fitToPlot: false, // fitToPlotをfalseに設定
                 frame: {
@@ -275,6 +275,10 @@ function createChart(dataArray) {
                     enabled: true,
                     formatter: function () {
                         return this.point.name;
+                    },
+                    style: {
+                        fontSize: '10px',
+                        color: 'black'
                     }
                 }
             }
@@ -308,8 +312,8 @@ function createChart(dataArray) {
         series: [{
             name: 'Data',
             data: dataArray,
-            colorByPoint: true,
-            dataLabels: {
+            colorByPoint: true
+            /*, dataLabels: {
                 enabled: true,
                 format: '{point.name}',
                 style: {
@@ -318,11 +322,11 @@ function createChart(dataArray) {
                     textOutline: 'none'
                 }
             },
-        　keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
+        　keys: ['x', 'y', 'z', 'name', 'color'] */ // データのキーを指定
         }],
         tooltip: {
             headerFormat: '',
-            pointFormat: `<b>{point.name}</b><br>${xAxisUnit}: {point.x:.3f}<br>${yAxisUnit}: {point.y:.3f}<br>${zAxisUnit}: {point.z:.3f}` // 小数点以下3桁まで表示
+              pointFormat: `<b>{point.name}</b><br>X: {point.x:.2f}<br>Y: {point.y:.2f}<br>Z: {point.z:.2f}`
         }
     });
     console.log(chart); // チャートオブジェクトの確認
