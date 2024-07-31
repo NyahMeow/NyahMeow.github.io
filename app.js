@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 let globalDataArray = []; // Store data globally for link generation
-const pastebinApiKey = 'YOUR_PASTEBIN_API_KEY';
 
 function processFile() {
     const fileInput = document.getElementById('fileInput');
@@ -181,50 +180,46 @@ function createChart(dataArray) {
     }(Highcharts));
 }
 
-async function generateLink() {
+function generateLink() {
+    const baseURL = window.location.href.split('?')[0];
     const dataString = JSON.stringify(globalDataArray);
+    const encodedData = btoa(encodeURIComponent(dataString));
+    const chunkSize = 1800; // Adjust chunk size based on URL length limitations
 
-    try {
-        const response = await fetch('https://pastebin.com/api/api_post.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                api_dev_key: pastebinApiKey,
-                api_option: 'paste',
-                api_paste_code: dataString,
-                api_paste_private: '1',
-                api_paste_expire_date: '1H'
-            })
-        });
+    let links = [];
+    for (let i = 0; i < encodedData.length; i += chunkSize) {
+        let chunk = encodedData.substring(i, i + chunkSize);
+        let link = `${baseURL}?dataChunk=${chunk}&chunkIndex=${Math.floor(i / chunkSize)}&totalChunks=${Math.ceil(encodedData.length / chunkSize)}`;
+        links.push(link);
+    }
 
-        const result = await response.text();
-        const pasteUrl = new URL(result).pathname.split('/').pop();
-        const shortUrl = `https://pastebin.com/raw/${pasteUrl}`;
-
-        const baseURL = window.location.href.split('?')[0];
-        const link = `${baseURL}?dataUrl=${encodeURIComponent(shortUrl)}`;
-        document.getElementById('generatedLink').value = link;
-    } catch (error) {
-        console.error("Error generating link:", error);
-        alert("Failed to generate link. Please try again.");
+    if (links.length === 1) {
+        document.getElementById('generatedLink').value = links[0];
+    } else {
+        // Display multiple links if necessary
+        document.getElementById('generatedLink').value = links.join("\n");
     }
 }
 
 // Parse URL parameters to load chart data if available
-(async function() {
+(function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const dataUrl = urlParams.get('dataUrl');
-    if (dataUrl) {
-        try {
-            const response = await fetch(decodeURIComponent(dataUrl));
-            const dataString = await response.text();
+    const dataChunk = urlParams.get('dataChunk');
+    const chunkIndex = urlParams.get('chunkIndex');
+    const totalChunks = urlParams.get('totalChunks');
+
+    if (dataChunk !== null && chunkIndex !== null && totalChunks !== null) {
+        let allChunks = JSON.parse(localStorage.getItem('allChunks')) || [];
+        allChunks[chunkIndex] = dataChunk;
+        localStorage.setItem('allChunks', JSON.stringify(allChunks));
+
+        if (allChunks.filter(chunk => chunk !== undefined).length == totalChunks) {
+            const encodedData = allChunks.join('');
+            const dataString = decodeURIComponent(atob(encodedData));
             const dataArray = JSON.parse(dataString);
+
             createChart(dataArray);
-        } catch (error) {
-            console.error("Error loading data from URL:", error);
-            alert("Failed to load data from the link. Please check the link and try again.");
+            localStorage.removeItem('allChunks'); // Clear temporary storage
         }
     }
 })();
