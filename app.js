@@ -275,7 +275,8 @@ function createChart(dataArray) {
             name: 'Data',
             data: dataArray,
             colorByPoint: true,
-            keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
+            keys: ['x', 'y', 'z', 'name', 'color'] ,// データのキーを指定
+            stickyTracking: false // this option makes the tooltip disappear when mouse moves away.
         }],
         tooltip: {
             headerFormat: '',
