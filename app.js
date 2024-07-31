@@ -2,70 +2,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded and parsed");
     document.getElementById('analyzeButton').addEventListener('click', processFile);
     document.getElementById('generateLinkButton').addEventListener('click', generateLink);
-
-    // Initialize IndexedDB
-    initializeDB();
 });
 
 let globalDataArray = []; // Store data globally for link generation
-let db;
 
-// Initialize IndexedDB
-function initializeDB() {
-    const request = indexedDB.open('ChartDataDB', 1);
-
-    request.onerror = function(event) {
-        console.error('Database error:', event.target.error);
-    };
-
-    request.onsuccess = function(event) {
-        db = event.target.result;
-        console.log('Database initialized');
-        checkAndLoadData();
-    };
-
-    request.onupgradeneeded = function(event) {
-        db = event.target.result;
-        db.createObjectStore('chartData', { keyPath: 'id', autoIncrement: true });
-        console.log('Database setup complete');
-    };
-}
-
-// Store data in IndexedDB
-function storeData(data) {
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['chartData'], 'readwrite');
-        const objectStore = transaction.objectStore('chartData');
-        const request = objectStore.add({ data });
-
-        request.onsuccess = function(event) {
-            resolve(event.target.result);
-        };
-
-        request.onerror = function(event) {
-            reject(event.target.error);
-        };
-    });
-}
-
-// Retrieve data from IndexedDB
-function retrieveData(id) {
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['chartData']);
-        const objectStore = transaction.objectStore('chartData');
-        const request = objectStore.get(id);
-
-        request.onsuccess = function(event) {
-            resolve(event.target.result.data);
-        };
-
-        request.onerror = function(event) {
-            reject(event.target.error);
-        };
-    });
-}
-
-// Process file input
 function processFile() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -95,7 +35,6 @@ function processFile() {
     reader.readAsBinaryString(file);
 }
 
-// Process data from file
 function processData(data) {
     var dataArray = [];
     for (var i = 1; i < data.length; i++) { // Skip header row
@@ -118,7 +57,6 @@ function processData(data) {
     createChart(dataArray);
 }
 
-// Create Highcharts chart
 function createChart(dataArray) {
     console.log("Creating chart with data:", dataArray);
     var chart = Highcharts.chart('container', {
@@ -242,30 +180,53 @@ function createChart(dataArray) {
     }(Highcharts));
 }
 
-// Generate link
+// Generate link using GitHub Gists
 async function generateLink() {
+    const dataString = JSON.stringify(globalDataArray);
+
     try {
-        const id = await storeData(globalDataArray);
+        const response = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN` // Replace with your token
+            },
+            body: JSON.stringify({
+                description: "3D Scatter Plot Data",
+                public: true,
+                files: {
+                    "data.json": {
+                        content: dataString
+                    }
+                }
+            })
+        });
+
+        const result = await response.json();
+        const gistUrl = result.files["data.json"].raw_url;
+
         const baseURL = window.location.href.split('?')[0];
-        const link = `${baseURL}?dataId=${id}`;
+        const link = `${baseURL}?gistUrl=${encodeURIComponent(gistUrl)}`;
         document.getElementById('generatedLink').value = link;
     } catch (error) {
-        console.error('Error generating link:', error);
-        alert('Failed to generate link. Please try again.');
+        console.error("Error generating link:", error);
+        alert("Failed to generate link. Please try again.");
     }
 }
 
-// Parse URL parameters and load chart data if available
+// Parse URL parameters to load chart data if available
 async function checkAndLoadData() {
     const urlParams = new URLSearchParams(window.location.search);
-    const dataId = urlParams.get('dataId');
-    if (dataId) {
+    const gistUrl = urlParams.get('gistUrl');
+    if (gistUrl) {
         try {
-            const dataArray = await retrieveData(parseInt(dataId));
+            const response = await fetch(decodeURIComponent(gistUrl));
+            const dataString = await response.text();
+            const dataArray = JSON.parse(dataString);
             createChart(dataArray);
         } catch (error) {
-            console.error('Error loading data:', error);
-            alert('Failed to load data from the link. Please check the link and try again.');
+            console.error("Error loading data from URL:", error);
+            alert("Failed to load data from the link. Please check the link and try again.");
         }
     }
 }
