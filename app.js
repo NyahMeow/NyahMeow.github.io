@@ -246,9 +246,8 @@ function createChart(dataArray) {
                 depth: 10,
                 dataLabels: {
                    enabled: true,
-                   formatter: function () {
-                       return `${this.point.name}<br>X: ${this.point.x} <br>Y: ${this.point.y}<br>Z: ${this.point.z}`;
-                   },
+                   formatter: function(){
+                       return this.pont.name;
                    style: {
                        fontSize: '8px',
                        color: 'gray',
