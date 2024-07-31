@@ -40,14 +40,12 @@ function processData(data) {
             var x = parseFloat(row[0]);
             var y = parseFloat(row[1]);
             var z = parseFloat(row[2]);
-            var country = row[3];
-            var color = 'rgba(0, 105, 255, ' + (1 - (z / 5)) + ')'; // Color based on z value
+            var name = row[3];
             dataArray.push({
                 'x': x,
                 'y': y,
                 'z': z,
-                'name': country,
-                'color': color
+                'name': name
             });
         }
     }
@@ -97,36 +95,25 @@ function createChart(dataArray) {
                 }
             }
         },
-        yAxis: {
-            min: 0,
-            max: 30,
+        xAxis: {
             title: {
-                text: 'Y-Axis'
+                text: 'X Axis'
             }
         },
-        xAxis: {
-            min: 0,
-            max: 30,
-            gridLineWidth: 1,
+        yAxis: {
             title: {
-                text: 'X-Axis'
+                text: 'Y Axis'
             }
         },
         zAxis: {
-            min: 0,
-            max: 30,
-            showFirstLabel: false,
             title: {
-                text: 'Z-Axis'
+                text: 'Z Axis'
             }
-        },
-        legend: {
-            enabled: false
         },
         series: [{
             name: 'Data',
-            colorByPoint: true,
-            data: dataArray
+            data: dataArray,
+            colorByPoint: true
         }],
         tooltip: {
             headerFormat: '',
