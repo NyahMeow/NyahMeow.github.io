@@ -243,16 +243,6 @@ function createChart(dataArray) {
                 width: 10,
                 height: 10,
                 depth: 10,
-                dataLabels: {
-                    enabled: true,
-                    formatter: function () {
-                        return this.point.name;
-                    },
-                    style: {
-                        fontSize: '10px',
-                        color: 'black'
-                    }
-                }
             }
         },
         xAxis: {
@@ -284,17 +274,8 @@ function createChart(dataArray) {
         series: [{
             name: 'Data',
             data: dataArray,
-            colorByPoint: true
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}',
-                style: {
-                    fontSize: '8px',
-                    color: 'gray',
-                    textOutline: 'none'
-                }
-            },
-        　keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
+            colorByPoint: true,
+            keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
         }],
         tooltip: {
             headerFormat: '',
