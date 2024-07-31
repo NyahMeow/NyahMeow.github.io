@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 let globalDataArray = []; // Store data globally for link generation
+const pastebinApiKey = 'YOUR_PASTEBIN_API_KEY';
 
 function processFile() {
     const fileInput = document.getElementById('fileInput');
@@ -181,26 +182,49 @@ function createChart(dataArray) {
 }
 
 async function generateLink() {
-    const baseURL = window.location.href.split('?')[0];
-    const dataString = encodeURIComponent(JSON.stringify(globalDataArray));
-    const fullURL = `${baseURL}?data=${dataString}`;
+    const dataString = JSON.stringify(globalDataArray);
 
     try {
-        const response = await fetch(`https://tinyurl.com/api-create.php?url=${fullURL}`);
-        const shortURL = await response.text();
-        document.getElementById('generatedLink').value = shortURL;
+        const response = await fetch('https://pastebin.com/api/api_post.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                api_dev_key: pastebinApiKey,
+                api_option: 'paste',
+                api_paste_code: dataString,
+                api_paste_private: '1',
+                api_paste_expire_date: '1H'
+            })
+        });
+
+        const result = await response.text();
+        const pasteUrl = new URL(result).pathname.split('/').pop();
+        const shortUrl = `https://pastebin.com/raw/${pasteUrl}`;
+
+        const baseURL = window.location.href.split('?')[0];
+        const link = `${baseURL}?dataUrl=${encodeURIComponent(shortUrl)}`;
+        document.getElementById('generatedLink').value = link;
     } catch (error) {
-        console.error("Error generating short URL:", error);
-        alert("Failed to generate short URL. Please try again.");
+        console.error("Error generating link:", error);
+        alert("Failed to generate link. Please try again.");
     }
 }
 
 // Parse URL parameters to load chart data if available
-(function() {
+(async function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const dataParam = urlParams.get('data');
-    if (dataParam) {
-        const dataArray = JSON.parse(decodeURIComponent(dataParam));
-        createChart(dataArray);
+    const dataUrl = urlParams.get('dataUrl');
+    if (dataUrl) {
+        try {
+            const response = await fetch(decodeURIComponent(dataUrl));
+            const dataString = await response.text();
+            const dataArray = JSON.parse(dataString);
+            createChart(dataArray);
+        } catch (error) {
+            console.error("Error loading data from URL:", error);
+            alert("Failed to load data from the link. Please check the link and try again.");
+        }
     }
 })();
