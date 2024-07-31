@@ -49,7 +49,7 @@ function processData(data) {
             });
         }
     }
-    console.log(dataArray);  // Log data for debugging
+    console.log("Processed data array:", dataArray);  // Log data for debugging
     createChart(dataArray);
 }
 
@@ -113,7 +113,16 @@ function createChart(dataArray) {
         series: [{
             name: 'Data',
             data: dataArray,
-            colorByPoint: true
+            colorByPoint: true,
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                style: {
+                    fontSize: '12px',
+                    color: 'black',
+                    textOutline: 'none'
+                }
+            }
         }],
         tooltip: {
             headerFormat: '',
