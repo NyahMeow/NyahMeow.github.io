@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 let globalDataArray = []; // Store data globally for link generation
 
-const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID'; // Replace with your Google Sheet ID
-const API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your Google API Key
-
 function processFile() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -187,9 +184,16 @@ function createChart(dataArray) {
 // Generate link using Google Sheets
 async function generateLink() {
     const dataString = JSON.stringify(globalDataArray);
+    const sheetId = document.getElementById('sheetIdInput').value;
+    const apiKey = document.getElementById('apiKeyInput').value;
+
+    if (!sheetId || !apiKey) {
+        alert("Please enter both Google Sheet ID and Google API Key.");
+        return;
+    }
 
     try {
-        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:append?valueInputOption=USER_ENTERED&key=${API_KEY}`, {
+        const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:append?valueInputOption=USER_ENTERED&key=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -203,7 +207,7 @@ async function generateLink() {
 
         const result = await response.json();
         const baseURL = window.location.href.split('?')[0];
-        const link = `${baseURL}?sheetId=${SHEET_ID}`;
+        const link = `${baseURL}?sheetId=${sheetId}&apiKey=${apiKey}`;
         document.getElementById('generatedLink').value = link;
     } catch (error) {
         console.error("Error generating link:", error);
@@ -215,9 +219,25 @@ async function generateLink() {
 async function checkAndLoadData() {
     const urlParams = new URLSearchParams(window.location.search);
     const sheetId = urlParams.get('sheetId');
-    if (sheetId) {
+    const apiKey = urlParams.get('apiKey');
+
+    if (sheetId && apiKey) {
         try {
-            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:A?key=${API_KEY}`);
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:A?key=${apiKey}`);
+            const result = await response.json();
+            const dataString = result.values[0][0];
+            const dataArray = JSON.parse(dataStringContinuing from where we left off:
+
+```javascript
+// Parse URL parameters to load chart data if available
+async function checkAndLoadData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sheetId = urlParams.get('sheetId');
+    const apiKey = urlParams.get('apiKey');
+
+    if (sheetId && apiKey) {
+        try {
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:A?key=${apiKey}`);
             const result = await response.json();
             const dataString = result.values[0][0];
             const dataArray = JSON.parse(dataString);
