@@ -3,39 +3,6 @@ let originalData; // 元のデータを保存する変数
 let customColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FFA500']; // 初期色設定
 
 document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const chartConfigKey = urlParams.get('chartConfigKey');
-    const controls = document.getElementById('controls');
-    if (chartConfigKey) {
-        const storedConfig = localStorage.getItem(chartConfigKey);
-        if (storedConfig) {
-            try {
-                const chartConfig = JSON.parse(storedConfig);
-                chartConfig.chart.options3d.enabled = true; // Enable 3D
-                chartConfig.chart.options3d.alpha = 10;
-                chartConfig.chart.options3d.beta = 30;
-                chartConfig.chart.options3d.depth = 350;
-                chartConfig.chart.options3d.viewDistance = 25;
-                chartConfig.chart.options3d.fitToPlot = false;
-                chartConfig.chart.options3d.frame = {
-                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
-                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
-                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
-                };
-
-                chart = Highcharts.chart('container', chartConfig);
-                controls.classList.add('hidden'); // Hide controls
-
-                // Enable 3D navigation for the chart
-                enable3DNavigation(chart);
-            } catch (e) {
-                console.error('Error parsing stored chart configuration:', e);
-            }
-        } else {
-            console.error('No stored chart configuration found for key:', chartConfigKey);
-        }
-    }
-    
     const analyzeButton = document.getElementById('analyzeButton');
     const resizeChartButton = document.getElementById('resizeChart');
     const resizeChartByRatioButton = document.getElementById('resizeChartByRatio');
@@ -44,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const updateViewDistanceButton = document.getElementById('updateViewDistance');
     const updateColoringButton = document.getElementById('updateColoring');
     const updateColorsButton = document.getElementById('updateColors');
-    const generateLinkButton = document.getElementById('generateLink');
 
     analyzeButton.addEventListener('click', processFile);
     resizeChartButton.addEventListener('click', resizeChart);
@@ -54,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateViewDistanceButton.addEventListener('click', updateViewDistance);
     updateColoringButton.addEventListener('click', updateColoring);
     updateColorsButton.addEventListener('click', updateColors);
-    generateLinkButton.addEventListener('click', generateLink);
 });
 
 function processFile() {
