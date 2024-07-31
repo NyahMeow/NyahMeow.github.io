@@ -313,7 +313,7 @@ function createChart(dataArray) {
             name: 'Data',
             data: dataArray,
             colorByPoint: true
-            /*, dataLabels: {
+            dataLabels: {
                 enabled: true,
                 format: '{point.name}',
                 style: {
@@ -322,7 +322,7 @@ function createChart(dataArray) {
                     textOutline: 'none'
                 }
             },
-        　keys: ['x', 'y', 'z', 'name', 'color'] */ // データのキーを指定
+        　keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
         }],
         tooltip: {
             headerFormat: '',
