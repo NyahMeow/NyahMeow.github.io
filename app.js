@@ -313,12 +313,12 @@ function createChart(dataArray) {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    fontSize: '12px',
-                    color: 'black',
+                    fontSize: '8px',
+                    color: 'gray',
                     textOutline: 'none'
                 }
-            }
-                //keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
+            },
+        　keys: ['x', 'y', 'z', 'name', 'color'] // データのキーを指定
         }],
         tooltip: {
             headerFormat: '',
