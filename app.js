@@ -281,7 +281,7 @@ function createChart(dataArray) {
                 style: {
                     fontSize: '8px',
                     color: 'gray',
-                    textOutline: none'
+                    textOutline: 'none'
                 }
             }
         }],
