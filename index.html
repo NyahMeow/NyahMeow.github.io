@@ -21,6 +21,8 @@
                 { x: 3, y: 4, z: 5, name: 'Point 3' }
             ];
 
+            console.log('Data Array:', dataArray); // Logging the data array
+
             Highcharts.chart('container', {
                 chart: {
                     type: 'scatter3d',
@@ -38,7 +40,12 @@
                     scatter: {
                         dataLabels: {
                             enabled: true,
-                            format: '{point.name}'
+                            format: '{point.name}',
+                            style: {
+                                color: 'black',
+                                textOutline: 'none',
+                                fontSize: '12px'
+                            }
                         }
                     }
                 },
@@ -62,6 +69,8 @@
                     data: dataArray
                 }]
             });
+
+            console.log('Chart Initialized');
         });
     </script>
 </body>
