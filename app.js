@@ -42,17 +42,17 @@ function processFile() {
         // 読み込まれたデータをコンソールに出力
         console.log("Loaded data:", json);
 
-        // ファイル名から拡張子を除いた名前を取得
+        // ファイル名から拡張子を除いた名前を取得 (追加)
         const fileName = file.name.split('.').slice(0, -1).join('.');
 
-        // X, Y, Z軸の名称を初期設定
+        // X, Y, Z軸の名称を初期設定 (追加)
         if (json.length > 0) {
             document.getElementById('xAxisUnit').value = json[0][0] || 'X-Axis';
             document.getElementById('yAxisUnit').value = json[0][1] || 'Y-Axis';
             document.getElementById('zAxisUnit').value = json[0][2] || 'Z-Axis';
         }
 
-        // チャートタイトルをファイル名に設定
+        // チャートタイトルをファイル名に設定 (追加)
         document.getElementById('container').setAttribute('data-title', fileName);
         
         originalData = json;
@@ -180,7 +180,6 @@ function updateColors() {
     processData(originalData, document.getElementById('colorColumn').value);
 }
 
-// Continue from the previous block
 function processData(data, colorColumn = 'z') {
     const dataArray = [];
     let xMin = Infinity, xMax = -Infinity;
@@ -219,7 +218,7 @@ function processData(data, colorColumn = 'z') {
 
     // Update the axis range inputs with calculated values
     document.getElementById('xMin').value = xMin;
-    document.getElementById('xMax').value = xMax;
+    document.getElementById('xMax').value = xMax
     document.getElementById('yMin').value = yMin;
     document.getElementById('yMax').value = yMax;
     document.getElementById('zMin').value = zMin;
@@ -240,6 +239,7 @@ function createChart(dataArray) {
     const yAxisUnit = document.getElementById('yAxisUnit').value; // 追加
     const zAxisUnit = document.getElementById('zAxisUnit').value; // 追加
     const viewDistance = parseInt(document.getElementById('viewDistance').value, 10); // 追加
+
     chart = Highcharts.chart('container', {
         chart: {
             renderTo: 'container',
@@ -271,7 +271,11 @@ function createChart(dataArray) {
             scatter: {
                 width: 10,
                 height: 10,
-                depth: 10
+                depth: 10,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}'
+                }
             }
         },
         xAxis: {
