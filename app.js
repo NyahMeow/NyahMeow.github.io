@@ -180,11 +180,19 @@ function createChart(dataArray) {
     }(Highcharts));
 }
 
-function generateLink() {
+async function generateLink() {
     const baseURL = window.location.href.split('?')[0];
     const dataString = encodeURIComponent(JSON.stringify(globalDataArray));
-    const link = `${baseURL}?data=${dataString}`;
-    document.getElementById('generatedLink').value = link;
+    const fullURL = `${baseURL}?data=${dataString}`;
+
+    try {
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${fullURL}`);
+        const shortURL = await response.text();
+        document.getElementById('generatedLink').value = shortURL;
+    } catch (error) {
+        console.error("Error generating short URL:", error);
+        alert("Failed to generate short URL. Please try again.");
+    }
 }
 
 // Parse URL parameters to load chart data if available
