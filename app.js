@@ -189,7 +189,7 @@ async function generateLink() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN` // Replace with your token
+                'Authorization': `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` // Replace with your token
             },
             body: JSON.stringify({
                 description: "3D Scatter Plot Data",
