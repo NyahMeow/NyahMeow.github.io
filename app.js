@@ -244,14 +244,6 @@ function createChart(dataArray) {
                 width: 10,
                 height: 10,
                 depth: 10,
-                dataLabels: {
-                   enabled: true,
-                   formatter: function(){
-                       return this.pont.name;
-                   style: {
-                       fontSize: '8px',
-                       color: 'gray',
-                       textOutline: 'none'
                    }
                 }
             }
@@ -285,6 +277,14 @@ function createChart(dataArray) {
         series: [{
             name: 'Data',
             data: dataArray
+            dataLabels:{
+                enabled: true,
+                format: '{point.name}',
+                style: {
+                    fontSize: '8px',
+                    color: 'gray',
+                    textOutline: none'
+                }
         }],
     });
 
