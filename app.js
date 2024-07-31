@@ -3,6 +3,39 @@ let originalData; // 元のデータを保存する変数
 let customColors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FFA500']; // 初期色設定
 
 document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const chartConfigKey = urlParams.get('chartConfigKey');
+    const controls = document.getElementById('controls');
+    if (chartConfigKey) {
+        const storedConfig = localStorage.getItem(chartConfigKey);
+        if (storedConfig) {
+            try {
+                const chartConfig = JSON.parse(storedConfig);
+                chartConfig.chart.options3d.enabled = true; // Enable 3D
+                chartConfig.chart.options3d.alpha = 10;
+                chartConfig.chart.options3d.beta = 30;
+                chartConfig.chart.options3d.depth = 350;
+                chartConfig.chart.options3d.viewDistance = 25;
+                chartConfig.chart.options3d.fitToPlot = false;
+                chartConfig.chart.options3d.frame = {
+                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+                };
+
+                chart = Highcharts.chart('container', chartConfig);
+                controls.classList.add('hidden'); // Hide controls
+
+                // Enable 3D navigation for the chart
+                enable3DNavigation(chart);
+            } catch (e) {
+                console.error('Error parsing stored chart configuration:', e);
+            }
+        } else {
+            console.error('No stored chart configuration found for key:', chartConfigKey);
+        }
+    }
+    
     const analyzeButton = document.getElementById('analyzeButton');
     const resizeChartButton = document.getElementById('resizeChart');
     const resizeChartByRatioButton = document.getElementById('resizeChartByRatio');
@@ -11,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const updateViewDistanceButton = document.getElementById('updateViewDistance');
     const updateColoringButton = document.getElementById('updateColoring');
     const updateColorsButton = document.getElementById('updateColors');
+    const generateLinkButton = document.getElementById('generateLink');
 
     analyzeButton.addEventListener('click', processFile);
     resizeChartButton.addEventListener('click', resizeChart);
@@ -20,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateViewDistanceButton.addEventListener('click', updateViewDistance);
     updateColoringButton.addEventListener('click', updateColoring);
     updateColorsButton.addEventListener('click', updateColors);
+    generateLinkButton.addEventListener('click', generateLink);
 });
 
 function processFile() {
@@ -182,7 +217,6 @@ function updateColors() {
 
 function processData(data, colorColumn = 'z') {
     const dataArray = [];
-    const headers = data[0]; // Use the first row as headers
     let xMin = Infinity, xMax = -Infinity;
     let yMin = Infinity, yMax = -Infinity;
     let zMin = Infinity, zMax = -Infinity;
@@ -190,11 +224,11 @@ function processData(data, colorColumn = 'z') {
     for (let i = 1; i < data.length; i++) { // ヘッダー行をスキップ
         const row = data[i];
         if (Array.isArray(row) && row.length >= 4) { // 少なくとも4列があることを確認
-            const x = parseFloat(row[headers.indexOf('x')]);
-            const y = parseFloat(row[headers.indexOf('y')]);
-            const z = parseFloat(row[headers.indexOf('z')]);
-            const name = row[headers.indexOf('name')];
-            const colorValue = colorColumn === 'z' ? z : parseFloat(row[headers.indexOf('color')]);
+            const x = parseFloat(row[0]);
+            const y = parseFloat(row[1]);
+            const z = parseFloat(row[2]);
+            const name = row[3];
+            const colorValue = colorColumn === 'z' ? z : parseFloat(row[4]); // 色付けに使用する値
 
             xMin = Math.min(xMin, x);
             xMax = Math.max(xMax, x);
@@ -219,7 +253,7 @@ function processData(data, colorColumn = 'z') {
 
     // Update the axis range inputs with calculated values
     document.getElementById('xMin').value = xMin;
-    document.getElementById('xMax').value = xMax
+    document.getElementById('xMax').value = xMax;
     document.getElementById('yMin').value = yMin;
     document.getElementById('yMax').value = yMax;
     document.getElementById('zMin').value = zMin;
@@ -240,7 +274,6 @@ function createChart(dataArray) {
     const yAxisUnit = document.getElementById('yAxisUnit').value; // 追加
     const zAxisUnit = document.getElementById('zAxisUnit').value; // 追加
     const viewDistance = parseInt(document.getElementById('viewDistance').value, 10); // 追加
-
     chart = Highcharts.chart('container', {
         chart: {
             renderTo: 'container',
@@ -272,12 +305,7 @@ function createChart(dataArray) {
             scatter: {
                 width: 10,
                 height: 10,
-                depth: 10,
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.name}',
-                    allowOverlap: true // Allow overlapping of data labels
-                }
+                depth: 10
             }
         },
         xAxis: {
@@ -369,3 +397,18 @@ function enable3DNavigation(chart) {
     }(Highcharts));
 }
 
+function generateLink() {
+    if (!chart) {
+        alert("Chart is not initialized.");
+        return;
+    }
+
+    const chartConfig = chart.userOptions;
+    const chartConfigStr = JSON.stringify(chartConfig);
+    const chartConfigKey = 'chartConfig_' + Date.now();
+    localStorage.setItem(chartConfigKey, chartConfigStr);
+
+    const generatedLink = `${window.location.origin}${window.location.pathname}?chartConfigKey=${chartConfigKey}`;
+    const linkContainer = document.getElementById('linkContainer');
+    linkContainer.innerHTML = `<a href="${generatedLink}" target="_blank">Open Chart</a>`;
+}
