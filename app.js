@@ -305,7 +305,13 @@ function createChart(dataArray) {
             scatter: {
                 width: 10,
                 height: 10,
-                depth: 10
+                depth: 10,
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        return this.point.name;
+                    }
+                }
             }
         },
         xAxis: {
