@@ -212,6 +212,7 @@ function createChart(dataArray) {
     const yAxisUnit = document.getElementById('yAxisUnit').value;
     const zAxisUnit = document.getElementById('zAxisUnit').value;
     const viewDistance = parseInt(document.getElementById('viewDistance').value, 10);
+    
     chart = Highcharts.chart('container', {
         chart: {
             type: 'scatter3d',
@@ -243,6 +244,17 @@ function createChart(dataArray) {
                 width: 10,
                 height: 10,
                 depth: 10,
+                dataLabels: {
+                   enabled: true,
+                   formatter: function () {
+                       return `${this.point.name}<br>X: ${this.point.x} <br>Y: ${this.point.y}<br>Z: ${this.point.z}`;
+                   },
+                   style: {
+                       fontSize: '8px',
+                       color: 'gray',
+                       textOutline: 'none'
+                   }
+                }
             }
         },
         xAxis: {
@@ -273,15 +285,8 @@ function createChart(dataArray) {
         },
         series: [{
             name: 'Data',
-            data: dataArray,
-            colorByPoint: true,
-            keys: ['x', 'y', 'z', 'name', 'color'] ,// データのキーを指定
-            stickyTracking: false // this option makes the tooltip disappear when mouse moves away.
+            data: dataArray
         }],
-        tooltip: {
-            headerFormat: '',
-              pointFormat: `<b>{point.name}</b><br>X: {point.x:.2f}<br>Y: {point.y:.2f}<br>Z: {point.z:.2f}`
-        }
     });
 
     // 3D散布図のマウスイベントを追加
