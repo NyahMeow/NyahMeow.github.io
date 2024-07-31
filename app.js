@@ -182,6 +182,7 @@ function updateColors() {
 
 function processData(data, colorColumn = 'z') {
     const dataArray = [];
+    const headers = data[0]; // Use the first row as headers
     let xMin = Infinity, xMax = -Infinity;
     let yMin = Infinity, yMax = -Infinity;
     let zMin = Infinity, zMax = -Infinity;
@@ -189,11 +190,11 @@ function processData(data, colorColumn = 'z') {
     for (let i = 1; i < data.length; i++) { // ヘッダー行をスキップ
         const row = data[i];
         if (Array.isArray(row) && row.length >= 4) { // 少なくとも4列があることを確認
-            const x = parseFloat(row[0]);
-            const y = parseFloat(row[1]);
-            const z = parseFloat(row[2]);
-            const name = row[3];
-            const colorValue = colorColumn === 'z' ? z : parseFloat(row[4]); // 色付けに使用する値
+            const x = parseFloat(row[headers.indexOf('x')]);
+            const y = parseFloat(row[headers.indexOf('y')]);
+            const z = parseFloat(row[headers.indexOf('z')]);
+            const name = row[headers.indexOf('name')];
+            const colorValue = colorColumn === 'z' ? z : parseFloat(row[headers.indexOf('color')]);
 
             xMin = Math.min(xMin, x);
             xMax = Math.max(xMax, x);
