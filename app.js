@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM fully loaded and parsed");
     document.getElementById('analyzeButton').addEventListener('click', processFile);
+    document.getElementById('generateLinkButton').addEventListener('click', generateLink);
 });
+
+let globalDataArray = []; // Store data globally for link generation
 
 function processFile() {
     const fileInput = document.getElementById('fileInput');
@@ -50,6 +53,7 @@ function processData(data) {
         }
     }
     console.log("Processed data array:", dataArray);  // Log data for debugging
+    globalDataArray = dataArray; // Store data globally
     createChart(dataArray);
 }
 
@@ -176,13 +180,19 @@ function createChart(dataArray) {
     }(Highcharts));
 }
 
-// Initial chart setup with default data
-var defaultData = [
-    [5.6, 7.0, 4.73, 'United States of America'],
-    [8.07, 9.06, 4.48, "People's Republic of China"],
-    [9.66, 10.55, 4.06, 'Japan'],
-    [7.02, 8.58, 5.17, 'Great Britain'],
-    [10.1, 9.29, 3.26, 'ROC']
-];
+function generateLink() {
+    const baseURL = window.location.href.split('?')[0];
+    const dataString = encodeURIComponent(JSON.stringify(globalDataArray));
+    const link = `${baseURL}?data=${dataString}`;
+    document.getElementById('generatedLink').value = link;
+}
 
-processData(defaultData);
+// Parse URL parameters to load chart data if available
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dataParam = urlParams.get('data');
+    if (dataParam) {
+        const dataArray = JSON.parse(decodeURIComponent(dataParam));
+        createChart(dataArray);
+    }
+})();
