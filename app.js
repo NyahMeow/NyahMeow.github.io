@@ -78,9 +78,7 @@ function resizeChart() {
                 }
             }
         });
-    } else {
-        console.error("Chart not found.");
-    }
+    } 
 }
 
 function resizeChartByRatio() {
@@ -103,8 +101,6 @@ function resizeChartByRatio() {
                 }
             }
         });
-    } else {
-        console.error("Chart not found.");
     }
 }
 
@@ -113,8 +109,6 @@ function updateAxisUnits() {
         chart.xAxis[0].setTitle({ text: document.getElementById('xAxisUnit').value });
         chart.yAxis[0].setTitle({ text: document.getElementById('yAxisUnit').value });
         chart.zAxis[0].setTitle({ text: document.getElementById('zAxisUnit').value });
-    } else {
-        console.error("Chart not found.");
     }
 }
 
@@ -132,8 +126,6 @@ function updateAxisRange() {
             min: parseFloat(document.getElementById('zMin').value),
             max: parseFloat(document.getElementById('zMax').value)
         });
-    } else {
-        console.error("Chart not found.");
     }
 }
 
@@ -148,8 +140,6 @@ function updateViewDistance() {
                 }
             }
         });
-    } else {
-        console.error("Chart not found.");
     }
 }
 
