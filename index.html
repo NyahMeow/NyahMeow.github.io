@@ -2,10 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>3D Scatter Plot</title>
+    <style>
+        body {
+            display: none; /* Initially hide the body content */
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var password = 'Dr.Maeda'; // Set your password here
+            var userPassword = prompt("Name the developer of this app:");
 
-   <style>
+            if(userPassword === password) {
+                document.body.style.display = 'block'; // Show the content if password is correct
+            } else {
+                alert('Access Denied');
+            }
+        };
+    </script>
+
+<script src="app.js" defer></script>
+
+    <style>
     input[type="number"], input[type="text"] {
         width: 70px; /* Default width for most input boxes */
     }
