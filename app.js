@@ -192,12 +192,12 @@ function processData(data, colorColumn = 'z') {
     }
 
     // Update the axis range inputs with calculated values
-    document.getElementById('xMin').value = xMin;
-    document.getElementById('xMax').value = xMax;
-    document.getElementById('yMin').value = yMin;
-    document.getElementById('yMax').value = yMax;
-    document.getElementById('zMin').value = zMin;
-    document.getElementById('zMax').value = zMax;
+    document.getElementById('xMin').value = xMin.toFixed(3);
+    document.getElementById('xMax').value = xMax.toFixed(3);
+    document.getElementById('yMin').value = yMin.toFixed(3);
+    document.getElementById('yMax').value = yMax.toFixed(3);
+    document.getElementById('zMin').value = zMin.toFixed(3);
+    document.getElementById('zMax').value = zMax.toFixed(3);
 
     createChart(dataArray);
 }
